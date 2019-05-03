@@ -4,9 +4,10 @@
 1. Allows you to manipulate the data à la Redux
 1. Will throw out outdated API calls by default
 
-## `useData`
+## API
 
-Use data is the hook that fetches the data. The type definition is as follows:
+The `useData` hook is the only non-type export. The type definition is as
+follows:
 
 ```ts
 declare function useData<D>(
@@ -18,11 +19,12 @@ declare function useData<D>(
 
 If you are using this in a TypeScript project, you do not need to provide a type
 for the generic `D`, as it will be automatically parsed from the return type of
-`asyncFetch`. However in some cases it may be desirable to define it.
+`asyncFetch`. However in some cases it may be desirable to define it (see more
+information in the `initialData` section).
 
 It accepts three arguments:
 
-### `asyncFetch` _(`() => Promise<D>`)_
+#### `asyncFetch` - _`() => Promise<D>`_
 
 Any async fetch function that you want to use to fetch data from. The type will
 be automatically parsed from the return type.
@@ -37,7 +39,7 @@ const {loading, error, data} = useData(asyncFetch);
 const {loading, error, data} = useData(() => asyncFetch(someValue));
 ```
 
-### `initialData` _(`D`)_
+#### `initialData` - _`D`_
 
 Initial data must match the return type of `asyncFetch`, or the generic `D`. For
 example, the following will result in an error:
@@ -65,7 +67,7 @@ const {loading, error, data} = useData<{a: null | {b: string}}>(
 
 This will allow the property `a` to be either null or `{ b: string; }`.
 
-### `options` _(`UseDataOptions`)_
+#### `options` - _`UseDataOptions`_
 
 Options is an optional object that has the following structure:
 
@@ -81,7 +83,7 @@ export interface UseDataOptions {
 1. `takeEvery` - Default: _false_. Should the hook take every call rather than
    throwing out active calls when new ones are made.
 
-### `@returns` _(`StatusObject<D>`)_
+#### `@returns` - _`StatusObject<D>`_
 
 The hook returns an object with 5 properties:
 
