@@ -1,0 +1,50 @@
+{
+  "name": "use-data-hook",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "typing": "lib/index.d.ts",
+  "author": {
+    "name": "Liam Ross",
+    "email": "liamross.code@gmail.com"
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "lib/"
+  ],
+  "repository": "https://github.com/liamross/use-data-hook",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest ./src --config ./jest.config.js",
+    "build": "rm -rf lib && tsc",
+    "deploy": "rm -rf lib && tsc && yarn publish",
+    "deploy:next": "rm -rf lib && tsc && yarn publish --tag next",
+    "deploy:canary": "rm -rf lib && tsc && yarn publish --tag canary",
+    "lint": "eslint './src' --ext .js,.jsx,.ts,.tsx --cache"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.12",
+    "@types/react": "^16.8.15",
+    "@types/react-dom": "^16.8.4",
+    "@types/react-test-renderer": "^16.8.1",
+    "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "@typescript-eslint/parser": "^1.7.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^24.7.1",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^1.6.0",
+    "jest": "^24.7.1",
+    "prettier": "^1.17.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.4.5"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  }
+}

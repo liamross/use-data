@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "lib": ["es2017", "dom"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noUnusedLocals": false,
+    "outDir": "lib",
+    "paths": {"./lib/*": ["./src/*"]},
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "sourceMap": false,
+    "strict": true,
+    "target": "es5"
+  },
+  "include": ["src"],
+  "exclude": ["**/__tests__", "**/*.test.ts", "**/*.spec.ts"]
+}
