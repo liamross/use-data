@@ -4,6 +4,51 @@
 1. Allows you to manipulate the data à la Redux
 1. Will throw out outdated API calls by default
 
+Basic usage:
+
+```tsx
+const FunctionalComponent = ({someProp}) => {
+  const {loading, error, data} = useData(() => someApi(someProp));
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error...</p>;
+  return <p>{data.someString}</p>;
+};
+```
+
+<details><summary>Expand for more advanced usage:</summary>
+
+```tsx
+const FunctionalComponent: FC<{userId?: string}> = ({userId}) => {
+  const {loading, error, data, fireFetch, setData} = useData(
+    () => getUser(userId),
+    {username: '', age: 0},
+    {fireOnMount: false, takeEvery: true},
+  );
+
+  useEffect(() => {
+    // Wait for userId to fetch (see fireOnMount is false).
+    if (userId) fireFetch();
+  }, [userId]);
+
+  const handleSetUsername = () => {
+    // Uses the function option for newData in order to only change username.
+    setData(oldUser => ({...oldUser, username: 'John Doe'}));
+  };
+
+  if (error) return <p>Error...</p>;
+  if (loading) return <p>Loading...</p>;
+  return (
+    <>
+      <p>{data.username}</p>
+      <button onClick={handleSetUsername}>Set username to 'John Doe'</button>
+    </>
+  );
+};
+```
+
+</details>
+
 ## API
 
 The `useData` hook is the only non-type export. The type definition is as
@@ -92,17 +137,22 @@ The hook returns an object with 5 properties:
 1. `data` - The data from your async fetch, or null if not fetched.
 1. `fireFetch` - Fire the async function that was provided to useData.
 1. `setData` - Mutate the data. Either a function that takes old data and
-   returns the new data, or data of type `D`.
+   returns the new data, or data of type `D`. Calling this will turn `error` to
+   null. Additionally takes a parameter to stop loading when called (loading
+   will continue by default).
 
 ```ts
-interface StatusObject<D> extends UseDataState<D> {
-  fireFetch: () => void;
-  setData: (newData: D | ((oldData: D | null) => D)) => void;
-}
-
 interface UseDataState<D> {
   loading: boolean;
   error: Error | null;
   data: D | null;
+}
+
+interface StatusObject<D> extends UseDataState<D> {
+  fireFetch: () => void;
+  setData: (
+    newData: D | ((oldData: D | null) => D),
+    stopLoading?: boolean,
+  ) => void;
 }
 ```

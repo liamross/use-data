@@ -20,7 +20,7 @@ type UseDataAction<D> =
   | {type: 'FETCH_INIT'}
   | {type: 'FETCH_SUCCESS'; payload: D}
   | {type: 'FETCH_FAILURE'; payload: Error}
-  | {type: 'CHANGE_DATA'; payload: D};
+  | {type: 'CHANGE_DATA'; payload: {data: D; stopLoading: boolean}};
 
 interface UseDataState<D> {
   /** True if currently fetching. */
@@ -36,10 +36,10 @@ export interface StatusObject<D> extends UseDataState<D> {
   fireFetch: () => void;
   /**
    * Mutate the data.
-   * @param newData A new data, or a function that is given old data and returns
-   * the new data.
+   * @param newData A new data, or a function that is given old data and returns the new data.
+   * @param stopLoading Optional. Default false. Should loading stop when setData is called?
    */
-  setData: (newData: D | ((oldData: D | null) => D)) => void;
+  setData: (newData: D | ((oldData: D | null) => D), stopLoading?: boolean) => void;
 }
 
 /* --- Functions --- */
@@ -56,7 +56,12 @@ const dataFetchReducer = <D>() => {
       case 'FETCH_FAILURE':
         return {...state, loading: false, error: action.payload};
       case 'CHANGE_DATA':
-        return {...state, data: action.payload};
+        return {
+          ...state,
+          loading: action.payload.stopLoading ? false : state.loading,
+          error: null,
+          data: action.payload.data,
+        };
       default:
         throw new Error(`Invalid reducer type`);
     }
@@ -118,14 +123,14 @@ export function useData<D>(
   }, [fetchData]);
 
   const setData = useCallback<StatusObject<D>['setData']>(
-    newData => {
-      let payload;
+    (newData, stopLoading = false) => {
+      let data;
       if (typeof newData === 'function') {
-        payload = (newData as Function)(state.data);
+        data = (newData as Function)(state.data);
       } else {
-        payload = newData;
+        data = newData;
       }
-      dispatch({type: 'CHANGE_DATA', payload});
+      dispatch({type: 'CHANGE_DATA', payload: {data, stopLoading}});
     },
     [state.data],
   );
