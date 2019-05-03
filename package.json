@@ -22,9 +22,9 @@
   "scripts": {
     "test": "jest ./src --config ./jest.config.js",
     "build": "rm -rf lib && tsc -p tsbuild.json",
-    "deploy": "build && yarn publish",
-    "deploy:next": "build && yarn publish --tag next",
-    "deploy:canary": "build && yarn publish --tag canary",
+    "deploy": "yarn build && yarn publish",
+    "deploy:next": "yarn build && yarn publish --tag next",
+    "deploy:canary": "yarn build && yarn publish --tag canary",
     "lint": "eslint './src' --ext .js,.jsx,.ts,.tsx --cache"
   },
   "devDependencies": {
