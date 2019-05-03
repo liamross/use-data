@@ -1,8 +1,10 @@
-# Use Data Hook [![Build Status](https://travis-ci.org/liamross/use-data-hook.svg?branch=master)](https://travis-ci.org/liamross/use-data-hook) [![NPM Version](https://badge.fury.io/js/use-data-hook.svg)](https://www.npmjs.com/package/use-data-hook)
+# Use Data [![Build Status](https://travis-ci.org/liamross/use-data.svg?branch=master)](https://travis-ci.org/liamross/use-data) [![NPM Version](https://badge.fury.io/js/use-data.svg)](https://www.npmjs.com/package/use-data)
+
+A React hook that:
 
 1. Fetches data from an async function
 1. Allows you to manipulate the data à la Redux
-1. Will throw out outdated API calls by default
+1. Will use most recent call by default (if multiple calls are made)
 
 Basic usage:
 

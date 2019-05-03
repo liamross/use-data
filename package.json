@@ -1,5 +1,5 @@
 {
-  "name": "use-data-hook",
+  "name": "use-data",
   "version": "0.1.0",
   "main": "lib/index.js",
   "typing": "lib/index.d.ts",
@@ -17,7 +17,7 @@
     "LICENSE",
     "lib/"
   ],
-  "repository": "https://github.com/liamross/use-data-hook",
+  "repository": "https://github.com/liamross/use-data",
   "license": "MIT",
   "scripts": {
     "test": "jest ./src --config ./jest.config.js",
