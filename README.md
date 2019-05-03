@@ -1,4 +1,4 @@
-# Use Data Hook
+# Use Data Hook [![Build Status](https://travis-ci.org/liamross/use-data-hook.svg?branch=master)](https://travis-ci.org/liamross/use-data-hook) [![NPM Version](https://badge.fury.io/js/use-data-hook.svg)](https://www.npmjs.com/package/use-data-hook)
 
 1. Fetches data from an async function
 1. Allows you to manipulate the data à la Redux
