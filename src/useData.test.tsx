@@ -40,6 +40,15 @@ const FireFetchWithNewFunction: FC<{fn: Function}> = ({fn}) => {
   return null;
 };
 
+const FireFetchOnFnChange: FC<{fn: () => Promise<string>; done: Function}> = ({fn, done}) => {
+  const {data, fireFetch} = useData(fn);
+  useEffect(() => {
+    if (data === 'pass') done();
+  }, [done, data]);
+  useEffect(() => fireFetch(), [fn]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <>{data}</>;
+};
+
 /* --- Tests --- */
 
 describe('Use Data Hook', () => {
@@ -63,6 +72,16 @@ describe('Use Data Hook', () => {
   it('only gets data from a second call if the first is in progress', done => {
     act(() => {
       mount(<FireFetchWithNewFunction fn={done} />);
+    });
+  });
+
+  it('does not call stale asyncFetch function if updated', done => {
+    act(() => {
+      const badFn = async () => '';
+      const goodFn = async () => 'pass';
+      const wrapper = mount(<FireFetchOnFnChange fn={badFn} done={done} />);
+      wrapper.update();
+      wrapper.setProps({fn: goodFn});
     });
   });
 });
