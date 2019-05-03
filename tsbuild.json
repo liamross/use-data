@@ -16,10 +16,12 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
+    "sourceMap": false,
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "ES5",
     "outDir": "./lib"
   },
-  "include": ["./src"]
+  "include": ["./src"],
+  "exclude": ["**/*.test.*"]
 }

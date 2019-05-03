@@ -32,8 +32,11 @@ interface UseDataState<D> {
 }
 
 export interface StatusObject<D> extends UseDataState<D> {
-  /** Fire the async function that was provided to useData. */
-  fireFetch: () => void;
+  /**
+   * Fire the async function that was provided to useData.
+   * @param newAsyncFetch Optional. If provided, will call this instead of `asyncFetch`.
+   */
+  fireFetch: (newAsyncFetch?: () => Promise<D>) => void;
   /**
    * Mutate the data.
    * @param newData A new data, or a function that is given old data and returns the new data.
@@ -100,27 +103,38 @@ export function useData<D>(
     data: initialData || null,
   });
 
-  const fetchData = useCallback(async () => {
-    const startTime = new Date().getTime();
-    fnStartTime.current = startTime;
-    dispatch({type: 'FETCH_INIT'});
-    try {
-      const data = await savedAsyncFunc.current();
-      if (takeEvery || fnStartTime.current === startTime) {
-        dispatch({type: 'FETCH_SUCCESS', payload: data});
+  const fetchData = useCallback<(newAsyncFetch?: typeof asyncFetch) => void>(
+    async newAsyncFetch => {
+      const startTime = new Date().getTime();
+      fnStartTime.current = startTime;
+      dispatch({type: 'FETCH_INIT'});
+      try {
+        let data;
+        if (newAsyncFetch) {
+          data = await newAsyncFetch();
+        } else {
+          data = await savedAsyncFunc.current();
+        }
+        if (takeEvery || fnStartTime.current === startTime) {
+          dispatch({type: 'FETCH_SUCCESS', payload: data});
+        }
+      } catch (error) {
+        dispatch({type: 'FETCH_FAILURE', payload: error});
       }
-    } catch (error) {
-      dispatch({type: 'FETCH_FAILURE', payload: error});
-    }
-  }, [takeEvery]);
+    },
+    [takeEvery],
+  );
 
   useEffect(() => {
     fireOnMount && fetchData();
   }, [fireOnMount, fetchData]);
 
-  const fireFetch = useCallback<StatusObject<D>['fireFetch']>(() => {
-    fetchData();
-  }, [fetchData]);
+  const fireFetch = useCallback<StatusObject<D>['fireFetch']>(
+    newAsyncFetch => {
+      fetchData(newAsyncFetch);
+    },
+    [fetchData],
+  );
 
   const setData = useCallback<StatusObject<D>['setData']>(
     (newData, stopLoading = false) => {

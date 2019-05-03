@@ -135,7 +135,8 @@ The hook returns an object with 5 properties:
 1. `loading` - True if currently fetching.
 1. `error` - The error object if your fetch fails, or null if not failed.
 1. `data` - The data from your async fetch, or null if not fetched.
-1. `fireFetch` - Fire the async function that was provided to useData.
+1. `fireFetch` - Fire the async function that was provided to useData. You may
+   pass it an async function to call instead of `asyncFetch`,
 1. `setData` - Mutate the data. Either a function that takes old data and
    returns the new data, or data of type `D`. Calling this will turn `error` to
    null. Additionally takes a parameter to stop loading when called (loading
@@ -149,7 +150,7 @@ interface UseDataState<D> {
 }
 
 interface StatusObject<D> extends UseDataState<D> {
-  fireFetch: () => void;
+  fireFetch: (newAsyncFetch?: () => Promise<D>) => void;
   setData: (
     newData: D | ((oldData: D | null) => D),
     stopLoading?: boolean,
