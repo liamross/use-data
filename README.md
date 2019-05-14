@@ -41,7 +41,7 @@ const FunctionalComponent: FC<{userId?: string}> = ({userId}) => {
   return (
     <>
       <p>{data.username}</p>
-      <button onClick={handleSetUsername}>Set username to 'John Doe'</button>
+      <button onClick={handleSetUsername}>{"Set username to 'John Doe'"}</button>
     </>
   );
 };
