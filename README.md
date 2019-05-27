@@ -7,7 +7,7 @@
 Basic usage:
 
 ```tsx
-import React, {FC, useEffect} from 'react';
+import React, {FC} from 'react';
 import useData from 'use-data-hook';
 import {someApi} from './someApi';
 
