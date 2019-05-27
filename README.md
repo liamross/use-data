@@ -7,19 +7,27 @@
 Basic usage:
 
 ```tsx
-const FunctionalComponent = ({someProp}) => {
+import React, {FC, useEffect} from 'react';
+import useData from 'use-data-hook';
+import {someApi} from './someApi';
+
+const FunctionalComponent: FC<{someProp: string}> = ({someProp}) => {
   const {loading, error, data} = useData(() => someApi(someProp));
 
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>Error...</p>;
-  return <p>{data.someString}</p>;
+  if (loading) return <p>Loading...</p>;
+  return <p>{data!.someString}</p>;
 };
 ```
 
 <details><summary>Expand for more advanced usage:</summary>
 
 ```tsx
-const FunctionalComponent: FC<{userId?: string}> = ({userId}) => {
+import React, {FC, useEffect} from 'react';
+import useData from 'use-data-hook';
+import {getUser} from './getUserAPI';
+
+const FunctionalComponent: FC<{userId: string}> = ({userId}) => {
   const {loading, error, data, fireFetch, setData} = useData(
     () => getUser(userId),
     {username: '', age: 0},
@@ -29,20 +37,53 @@ const FunctionalComponent: FC<{userId?: string}> = ({userId}) => {
   useEffect(() => {
     // Wait for userId to fetch (see fireOnMount is false).
     if (userId) fireFetch();
-  }, [userId]);
+  }, [fireFetch, userId]);
 
   const handleSetUsername = () => {
     // Uses the function option for newData in order to only change username.
-    setData(oldUser => ({...oldUser, username: 'John Doe'}));
+    setData(oldUser => ({...oldUser!, username: 'John Doe'}));
   };
 
   if (error) return <p>Error...</p>;
   if (loading) return <p>Loading...</p>;
   return (
     <>
-      <p>{data.username}</p>
-      <button onClick={handleSetUsername}>{"Set username to 'John Doe'"}</button>
+      <p>{data!.username}</p>
+      <button onClick={handleSetUsername}>
+        {"Set username to 'John Doe'"}
+      </button>
     </>
+  );
+};
+```
+
+</details>
+
+<details><summary>Expand for setting up hook with Context:</summary>
+
+```tsx
+import React, {createContext, FC} from 'react';
+import useData, {StatusObject} from 'use-data-hook';
+import {getName} from './getNameAPI';
+
+interface ContextData {
+  firstName: string;
+  lastName: string;
+}
+
+export const NameContext = createContext<StatusObject<ContextData>>({
+  loading: false,
+  error: new Error('No Provider'),
+  data: null,
+  fireFetch: () => new Error('No Provider'),
+  setData: () => new Error('No Provider'),
+});
+
+export const NameProvider: FC = ({children}) => {
+  const statusObject = useData(getName);
+
+  return (
+    <NameContext.Provider value={statusObject}>{children}</NameContext.Provider>
   );
 };
 ```
