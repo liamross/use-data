@@ -1,4 +1,4 @@
-# Use Data [![Build Status](https://travis-ci.org/liamross/use-data-hook.svg?branch=master)](https://travis-ci.org/liamross/use-data-hook) [![NPM Version](https://badge.fury.io/js/use-data-hook.svg)](https://www.npmjs.com/package/use-data-hook)
+# Use Data [![Build Status](https://travis-ci.org/liamross/use-data.svg?branch=master)](https://travis-ci.org/liamross/use-data) [![NPM Version](https://badge.fury.io/js/use-data.svg)](https://www.npmjs.com/package/use-data)
 
 1. Fetches data from an async function
 1. Allows you to manipulate the data à la Redux
@@ -8,7 +8,7 @@ Basic usage:
 
 ```tsx
 import React, {FC} from 'react';
-import useData from 'use-data-hook';
+import useData from 'use-data';
 import {someApi} from './someApi';
 
 const FunctionalComponent: FC<{someProp: string}> = ({someProp}) => {
@@ -24,7 +24,7 @@ const FunctionalComponent: FC<{someProp: string}> = ({someProp}) => {
 
 ```tsx
 import React, {FC, useEffect} from 'react';
-import useData from 'use-data-hook';
+import useData from 'use-data';
 import {getUser} from './getUserAPI';
 
 const FunctionalComponent: FC<{userId: string}> = ({userId}) => {
@@ -63,7 +63,7 @@ const FunctionalComponent: FC<{userId: string}> = ({userId}) => {
 
 ```tsx
 import React, {createContext, FC} from 'react';
-import useData, {StatusObject} from 'use-data-hook';
+import useData, {StatusObject} from 'use-data';
 import {getName} from './getNameAPI';
 
 interface ContextData {
