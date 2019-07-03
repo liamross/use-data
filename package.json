@@ -17,7 +17,7 @@
     "LICENSE",
     "lib/"
   ],
-  "repository": "https://github.com/liamross/use-data-hook",
+  "repository": "https://github.com/liamross/use-data",
   "license": "MIT",
   "scripts": {
     "test": "jest ./src --config ./jest.config.js",
