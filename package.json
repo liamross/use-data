@@ -1,5 +1,5 @@
 {
-  "name": "use-data-hook",
+  "name": "use-data",
   "version": "0.1.2",
   "main": "lib/index.js",
   "typing": "lib/index.d.ts",
