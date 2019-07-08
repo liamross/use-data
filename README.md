@@ -1,4 +1,4 @@
-# Use Data [![Build Status](https://travis-ci.org/liamross/use-data-hook.svg?branch=master)](https://travis-ci.org/liamross/use-data-hook) [![NPM Version](https://badge.fury.io/js/use-data.svg)](https://www.npmjs.com/package/use-data)
+# Use Data [![Build Status](https://travis-ci.org/liamross/use-data.svg?branch=master)](https://travis-ci.org/liamross/use-data) [![NPM Version](https://badge.fury.io/js/use-data.svg)](https://www.npmjs.com/package/use-data)
 
 1. Fetches data from an async function
 1. Allows you to manipulate the data à la Redux
