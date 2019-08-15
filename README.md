@@ -15,8 +15,8 @@ const FunctionalComponent: FC<{someProp: string}> = ({someProp}) => {
   const {loading, error, data} = useData(() => someApi(someProp));
 
   if (error) return <p>Error...</p>;
-  if (loading) return <p>Loading...</p>;
-  return <p>{data!.someString}</p>;
+  if (!data || loading) return <p>Loading...</p>;
+  return <p>{data.someString}</p>;
 };
 ```
 
