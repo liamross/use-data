@@ -98,7 +98,7 @@ export function useData<D>(
   });
 
   const [state, dispatch] = useReducer(dataFetchReducer<D>(), {
-    loading: true,
+    loading: fireOnMount,
     error: null,
     data: initialData || null,
   });
