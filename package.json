@@ -1,6 +1,6 @@
 {
   "name": "use-data",
-  "version": "0.1.5",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typing": "lib/index.d.ts",
   "author": {
