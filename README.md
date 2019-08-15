@@ -45,10 +45,10 @@ const FunctionalComponent: FC<{userId: string}> = ({userId}) => {
   };
 
   if (error) return <p>Error...</p>;
-  if (loading) return <p>Loading...</p>;
+  if (!data || loading) return <p>Loading...</p>;
   return (
     <>
-      <p>{data!.username}</p>
+      <p>{data.username}</p>
       <button onClick={handleSetUsername}>
         {"Set username to 'John Doe'"}
       </button>
