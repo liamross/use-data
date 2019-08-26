@@ -22,10 +22,13 @@ const FireFetch: FC<{fn: Function}> = ({fn}) => {
 };
 
 const FireFetchWithNewFunction: FC<{fn: Function}> = ({fn}) => {
-  const {data, fireFetch} = useData<'fail' | 'pass' | ''>(async () => {
-    await timeout(50);
-    return 'fail';
-  }, '');
+  const {data, fireFetch} = useData<'fail' | 'pass' | ''>(
+    async () => {
+      await timeout(50);
+      return 'fail';
+    },
+    {initialData: ''},
+  );
   useEffect(() => {
     fireFetch(async () => {
       return 'pass';

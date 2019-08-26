@@ -2,18 +2,26 @@ import {Reducer, useCallback, useEffect, useMemo, useReducer, useRef} from 'reac
 
 /* --- Types --- */
 
-export interface UseDataOptions {
+export interface UseDataOptions<D> {
   /**
-   * Should the hook fire the `asyncFetch` on mount.
+   * Should the hook fire the `asyncFetch` on mount. If true,
+   * `loading` is true. If false, `loading` is true as long as no `initialData`
+   * is provided.
    * @default true
    */
   fireOnMount?: boolean;
   /**
-   * Should the hook take every call rather than throwing out active calls when
-   * new ones are made.
+   * Should the hook take every call rather than throwing out active
+   * calls when new ones are made.
    * @default false
    */
   takeEvery?: boolean;
+  /**
+   * If given, will populate `data` prior to fetching. If provided
+   * along with `fireOnMount: false`, will make `loading` false, as the
+   * `initialData` serves as a placeholder until the fetch is completed.
+   */
+  initialData?: D;
 }
 
 type UseDataAction<D> =
@@ -78,14 +86,9 @@ const dataFetchReducer = <D>() => {
  * data, and errors, and a callback function to retry the `asyncFetch`.
  *
  * @param asyncFetch The async function that fetches your data.
- * @param initialData Optional. If given will initially populate data.
  * @param options Optional. Additional options for the hook.
  */
-export function useData<D>(
-  asyncFetch: () => Promise<D>,
-  initialData?: D,
-  options: UseDataOptions = {},
-): StatusObject<D> {
+export function useData<D>(asyncFetch: () => Promise<D>, options: UseDataOptions<D> = {}): StatusObject<D> {
   const fireOnMount = options.fireOnMount === undefined ? true : options.fireOnMount;
   const takeEvery = options.takeEvery === undefined ? false : options.takeEvery;
 
@@ -98,9 +101,9 @@ export function useData<D>(
   });
 
   const [state, dispatch] = useReducer(dataFetchReducer<D>(), {
-    loading: fireOnMount,
+    loading: fireOnMount || options.initialData === undefined,
     error: null,
-    data: initialData || null,
+    data: options.initialData || null,
   });
 
   const fetchData = useCallback<(newAsyncFetch?: typeof asyncFetch) => void>(

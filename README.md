@@ -6,21 +6,21 @@
 
 Basic usage:
 
-```tsx
-import React, {FC} from 'react';
+```jsx
+import React from 'react';
 import useData from 'use-data';
 import {someApi} from './someApi';
 
-const FunctionalComponent: FC<{someProp: string}> = ({someProp}) => {
+const FunctionalComponent = ({someProp}) => {
   const {loading, error, data} = useData(() => someApi(someProp));
 
   if (error) return <p>Error...</p>;
-  if (!data || loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
   return <p>{data.someString}</p>;
 };
 ```
 
-<details><summary>Expand for more advanced usage:</summary>
+<details><summary>Expand for more advanced usage with TypeScript:</summary>
 
 ```tsx
 import React, {FC, useEffect} from 'react';
@@ -28,14 +28,15 @@ import useData from 'use-data';
 import {getUser} from './getUserAPI';
 
 const FunctionalComponent: FC<{userId: string}> = ({userId}) => {
-  const {loading, error, data, fireFetch, setData} = useData(
-    () => getUser(userId),
-    {username: '', age: 0},
-    {fireOnMount: false, takeEvery: true},
-  );
+  const {loading, error, data, fireFetch, setData} = useData<{
+    username: string;
+    age: number;
+  }>(() => getUser(userId), {
+    fireOnMount: false, // We want to wait until we are sure userId exists.
+  });
 
   useEffect(() => {
-    // Wait for userId to fetch (see fireOnMount is false).
+    // Wait for userId to fetch (see `fireOnMount: false`).
     if (userId) fireFetch();
   }, [fireFetch, userId]);
 
@@ -45,10 +46,10 @@ const FunctionalComponent: FC<{userId: string}> = ({userId}) => {
   };
 
   if (error) return <p>Error...</p>;
-  if (!data || loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
   return (
     <>
-      <p>{data.username}</p>
+      <p>{data!.username}</p>
       <button onClick={handleSetUsername}>
         {"Set username to 'John Doe'"}
       </button>
@@ -92,14 +93,13 @@ export const NameProvider: FC = ({children}) => {
 
 ## API
 
-The `useData` hook is the only non-type export. The type definition is as
-follows:
+The `useData` hook is the only export (besides TypeScript interfaces and types).
+The type definition is as follows:
 
 ```ts
 declare function useData<D>(
   asyncFetch: () => Promise<D>,
-  initialData?: D,
-  options?: UseDataOptions,
+  options?: UseDataOptions<D>,
 ): StatusObject<D>;
 ```
 
@@ -125,55 +125,71 @@ const {loading, error, data} = useData(asyncFetch);
 const {loading, error, data} = useData(() => asyncFetch(someValue));
 ```
 
-#### `initialData` - _`D`_
-
-Initial data must match the return type of `asyncFetch`, or the generic `D`. For
-example, the following will result in an error:
-
-```ts
-const {loading, error, data} = useData(
-  async () => {
-    return {a: {b: 'b contents'}};
-  },
-  {a: null},
-);
-```
-
-This is because it expects `initialData` to be of type `{ a: { b: string; }; }`.
-To fix this, you will need to define the generic:
-
-```ts
-const {loading, error, data} = useData<{a: null | {b: string}}>(
-  async () => {
-    return {a: {b: 'b contents'}};
-  },
-  {a: null},
-);
-```
-
-This will allow the property `a` to be either null or `{ b: string; }`.
-
 #### `options` - _`UseDataOptions`_
 
 Options is an optional object that has the following structure:
 
 ```ts
-export interface UseDataOptions {
+interface UseDataOptions<D> {
   fireOnMount?: boolean;
   takeEvery?: boolean;
+  initialData?: D;
 }
 ```
 
-1. `fireOnMount` - Default: _true_. Should the hook fire the `asyncFetch` on
-   mount.
-1. `takeEvery` - Default: _false_. Should the hook take every call rather than
+1. `fireOnMount` (Default: _true_) - Should the hook fire the `asyncFetch` on
+   mount. If true, `loading` is true. If false, `loading` is true as long as no
+   `initialData` is provided.
+1. `takeEvery` (Default: _false_) - Should the hook take every call rather than
    throwing out active calls when new ones are made.
+1. `initialData` (Default: _undefined_) - If given, will populate `data` prior
+   to fetching. If provided along with `fireOnMount: false`, will make `loading`
+   false, as this `initialData` serves as a placeholder until the fetch is
+   completed. Initial data must match the return type of `asyncFetch`, or the
+   generic `D`. For example, the following will result in an error:
+
+   ```ts
+   const {loading, error, data} = useData(
+     async () => {
+       return {a: {b: 'b contents'}};
+     },
+     {initialData: {a: null}},
+   );
+   ```
+
+   This is because it expects `initialData` to be of type `{a: {b: string}}`. To
+   fix this, you will need to define the generic as `{a: null | {b: string}}` to
+   help TypeScript know that `a` can be either `null` or `{b: string}`:
+
+   ```ts
+   const {loading, error, data} = useData<{a: null | {b: string}}>(
+     async () => {
+       return {a: {b: 'b contents'}};
+     },
+     {initialData: {a: null}},
+   );
+   ```
 
 #### `@returns` - _`StatusObject<D>`_
 
-The hook returns an object with 5 properties:
+The hook returns a status object. The type definition is as follows:
 
-1. `loading` - True if currently fetching.
+```ts
+interface StatusObject<D> {
+  loading: boolean;
+  error: Error | null;
+  data: D | null;
+  fireFetch: (newAsyncFetch?: () => Promise<D>) => void;
+  setData: (
+    newData: D | ((oldData: D | null) => D),
+    stopLoading?: boolean,
+  ) => void;
+}
+```
+
+1. `loading` - True whenever fetching is occurring. Initially, if `fireOnMount`
+   is false and `initialData` is provided, will be false, since there is data
+   provided by `initialData`.
 1. `error` - The error object if your fetch fails, or null if not failed.
 1. `data` - The data from your async fetch, or null if not fetched.
 1. `fireFetch` - Fire the async function that was provided to useData. You may
@@ -182,19 +198,3 @@ The hook returns an object with 5 properties:
    returns the new data, or data of type `D`. Calling this will turn `error` to
    null. Additionally takes a parameter to stop loading when called (loading
    will continue by default).
-
-```ts
-interface UseDataState<D> {
-  loading: boolean;
-  error: Error | null;
-  data: D | null;
-}
-
-interface StatusObject<D> extends UseDataState<D> {
-  fireFetch: (newAsyncFetch?: () => Promise<D>) => void;
-  setData: (
-    newData: D | ((oldData: D | null) => D),
-    stopLoading?: boolean,
-  ) => void;
-}
-```
