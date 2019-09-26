@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import {mount} from 'enzyme';
 import React, {FC, useEffect} from 'react';
 import {act} from 'react-dom/test-utils';
