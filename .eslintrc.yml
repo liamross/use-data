@@ -39,3 +39,4 @@ overrides:
       '@typescript-eslint/camelcase': off
       '@typescript-eslint/no-triple-slash-reference': off
       '@typescript-eslint/no-non-null-assertion': off
+      '@typescript-eslint/no-explicit-any': off

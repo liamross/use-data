@@ -4,22 +4,21 @@ import {Reducer, useCallback, useEffect, useMemo, useReducer, useRef} from 'reac
 
 export interface UseDataOptions<D> {
   /**
-   * Should the hook fire the `asyncFetch` on mount. If true,
-   * `loading` is true. If false, `loading` is true as long as no `initialData`
-   * is provided.
+   * Should the hook fire the `asyncFetch` on mount. If true, `loading` is true.
+   * If false, `loading` is true as long as no `initialData` is provided.
    * @default true
    */
   fireOnMount?: boolean;
   /**
-   * Should the hook take every call rather than throwing out active
-   * calls when new ones are made.
+   * Should the hook take every call rather than throwing out active calls when
+   * new ones are made.
    * @default false
    */
   takeEvery?: boolean;
   /**
-   * If given, will populate `data` prior to fetching. If provided
-   * along with `fireOnMount: false`, will make `loading` false, as the
-   * `initialData` serves as a placeholder until the fetch is completed.
+   * If given, will populate `data` prior to fetching. If provided along with
+   * `fireOnMount: false`, will make `loading` false, as the `initialData`
+   * serves as a placeholder until the fetch is completed.
    */
   initialData?: D;
 }
@@ -33,8 +32,8 @@ type UseDataAction<D> =
 interface UseDataState<D> {
   /** True if currently fetching. */
   loading: boolean;
-  /** The error object if your fetch fails. */
-  error: Error | null;
+  /** Whatever is thrown from your fetch if it fails, or null if it has not failed. */
+  error: any | null;
   /** The data from your async fetch, or null if not fetched. */
   data: D | null;
 }
@@ -48,9 +47,9 @@ export interface StatusObject<D> extends UseDataState<D> {
   /**
    * Mutate the data.
    * @param newData A new data, or a function that is given old data and returns the new data.
-   * @param stopLoading Optional. Default false. Should loading stop when setData is called?
+   * @param stopLoading Optional. Default false. If loading, should loading stop when setData is called?
    */
-  setData: (newData: D | ((oldData: D | null) => D), stopLoading?: boolean) => void;
+  setData: (newData: D | null | ((oldData: D | null) => D | null), stopLoading?: boolean) => void;
 }
 
 /* --- Functions --- */

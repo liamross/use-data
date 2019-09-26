@@ -177,7 +177,7 @@ The hook returns a status object. The type definition is as follows:
 ```ts
 interface StatusObject<D> {
   loading: boolean;
-  error: Error | null;
+  error: any | null;
   data: D | null;
   fireFetch: (newAsyncFetch?: () => Promise<D>) => void;
   setData: (
@@ -190,7 +190,8 @@ interface StatusObject<D> {
 1. `loading` - True whenever fetching is occurring. Initially, if `fireOnMount`
    is false and `initialData` is provided, will be false, since there is data
    provided by `initialData`.
-1. `error` - The error object if your fetch fails, or null if not failed.
+1. `error` - Whatever is thrown from your fetch if it fails, or null if it has
+   not failed.
 1. `data` - The data from your async fetch, or null if not fetched.
 1. `fireFetch` - Fire the async function that was provided to useData. You may
    pass it an async function to call instead of `asyncFetch`,

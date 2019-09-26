@@ -55,31 +55,20 @@ const FireFetchOnFnChange: FC<{fn: () => Promise<string>; done: Function}> = ({f
 /* --- Tests --- */
 
 describe('Use Data Hook', () => {
-  // This is just a little hack to silence a warning that we'll get until react
-  // fixes this: https://github.com/facebook/react/pull/14853
-  const originalError = console.error;
-  beforeAll(() => {
-    console.error = (...args: string[]) => {
-      if (/Warning.*not wrapped in act/.test(args[0])) return;
-      originalError.call(console, ...args);
-    };
-  });
-  afterAll(() => (console.error = originalError));
-
-  it('calls asyncFetch to fetch data', done => {
-    act(() => {
+  it('calls asyncFetch to fetch data', async done => {
+    await act(async () => {
       mount(<FireFetch fn={done} />);
     });
   });
 
-  it('only gets data from a second call if the first is in progress', done => {
-    act(() => {
+  it('only gets data from a second call if the first is in progress', async done => {
+    await act(async () => {
       mount(<FireFetchWithNewFunction fn={done} />);
     });
   });
 
-  it('does not call stale asyncFetch function if updated', done => {
-    act(() => {
+  it('does not call stale asyncFetch function if updated', async done => {
+    await act(async () => {
       const badFn = async () => '';
       const goodFn = async () => 'pass';
       const wrapper = mount(<FireFetchOnFnChange fn={badFn} done={done} />);
